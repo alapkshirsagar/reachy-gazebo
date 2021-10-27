@@ -1,0 +1,34 @@
+controller_list:
+  - name: fake_right_arm_controller
+    type: $(arg execution_type)
+    joints:
+      - r_shoulder_pitch
+      - r_shoulder_roll
+      - r_arm_yaw
+      - r_elbow_pitch
+      - r_forearm_yaw
+      - r_wrist_pitch
+      - r_wrist_roll
+  - name: fake_left_arm_controller
+    type: $(arg execution_type)
+    joints:
+      - l_shoulder_pitch
+      - l_shoulder_roll
+      - l_arm_yaw
+      - l_elbow_pitch
+      - l_forearm_yaw
+      - l_wrist_pitch
+      - l_wrist_roll
+  - name: fake_head_controller
+    type: $(arg execution_type)
+    joints:
+      - orbita_roll
+      - orbita_pitch
+      - orbita_yaw
+initial:  # Define initial robot poses.
+  - group: right_arm
+    pose: right_arm_initial
+  - group: left_arm
+    pose: left_rest
+  - group: head
+    pose: head_rest

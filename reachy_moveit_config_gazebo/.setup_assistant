@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: reachy_description
+    relative_path: reachy.URDF.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/reachy.srdf
+  CONFIG:
+    author_name: Alap Kshirsagar
+    author_email: alapkshirsagar@gmail.com
+    generated_timestamp: 1634565264
