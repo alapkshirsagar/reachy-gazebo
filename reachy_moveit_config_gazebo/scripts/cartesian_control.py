@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import rospy
+import copy
 import actionlib
 import sys
 from trajectory_msgs.msg import JointTrajectoryPoint
@@ -34,30 +35,40 @@ class Arm:
 
     def move_arm(self):
         print('Moving joint')
-        pose_target = Pose()
-        pose_target.orientation.x = -0.002769137926803048
-        pose_target.orientation.y = 0.0024013303286062925
-        pose_target.orientation.z = -0.039698277529881615
-        pose_target.orientation.w = 0.9992049901041106
-        pose_target.position.x = -0.001338614902623077
-        pose_target.position.y = 0.19912895362063396
-        pose_target.position.z = 0.3524417531161036
+        # pose_target = Pose()
+        # pose_target.orientation.x = -0.002769137926803048
+        # pose_target.orientation.y = 0.0024013303286062925
+        # pose_target.orientation.z = -0.039698277529881615
+        # pose_target.orientation.w = 0.9992049901041106
+        # pose_target.position.x = -0.001338614902623077
+        # pose_target.position.y = 0.19912895362063396
+        # pose_target.position.z = 0.3524417531161036
         end_effector = self.group.get_end_effector_link()
-        pose = self.group.get_current_pose(end_effector)
+        #print(pose)
+        waypoints = [self.group.get_current_pose().pose]
+
+
+        
+        pose = self.group.get_current_pose(end_effector).pose
         print("pose before")
         print(pose)
-        pose.pose.position.z += 0.2
-        pose.pose.position.x += 0.2
+        pose.position.z += 0.2
+        pose.position.x += 0.2
 
+        waypoints.append(copy.deepcopy(pose))
+        pose.position.z += 0.2
+        pose.position.x += 0.2
+        waypoints.append(copy.deepcopy(pose))
+        self.group.compute_cartesian_path(waypoints, .01,.0)
         print("pose after")
         print(pose)
-        self.group.set_pose_target(pose, end_effector)
-        print(self.group.get_current_pose(end_effector))
+        # self.group.set_pose_target(pose, end_effector)
+        # print(self.group.get_current_pose(end_effector))
 
-        self.group.set_goal_tolerance(0.1)
-
+        self.group.set_goal_tolerance(1)
+        print("error after set goal")
         self.group.go(wait=True)
-
+        print("error after set go")
         self.group.stop()
 
         # plan = self.group.plan()
