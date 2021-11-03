@@ -9,78 +9,99 @@ from moveit_msgs.msg import MoveGroupAction, DisplayTrajectory
 from moveit_commander import MoveGroupCommander, RobotCommander, roscpp_initialize
 
 class Arm:
-    def __init__(self):
+    def __init__(self, controller):
         
-        self.group = MoveGroupCommander("right_arm")
+        self.group = MoveGroupCommander(controller)
         self.group.allow_replanning(True)
         self.group.set_start_state_to_current_state()
         self.robot = RobotCommander()
         self.display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',  DisplayTrajectory, queue_size=20)
-        #rospy.sleep(10)
-    
-    # def __init__(self):
-    #     print('Initializing joint')
-    #     print('Connecting to', '/move_group')
-    #     self.move_client = actionlib.SimpleActionClient('/move_group', MoveGroupAction)
-    #     self.move_client.wait_for_server()
-
-    #     roscpp_initialize(sys.argv)
-
-    #     group_name = RobotCommander().get_group_names()[0]
-    #     group = MoveGroupCommander("right arm")
 
 
-        
-    #     print('Found move client!')
-
-    def move_arm(self):
+    def right_arm_success(self):
         print('Moving joint')
-        # pose_target = Pose()
-        # pose_target.orientation.x = -0.002769137926803048
-        # pose_target.orientation.y = 0.0024013303286062925
-        # pose_target.orientation.z = -0.039698277529881615
-        # pose_target.orientation.w = 0.9992049901041106
-        # pose_target.position.x = -0.001338614902623077
-        # pose_target.position.y = 0.19912895362063396
-        # pose_target.position.z = 0.3524417531161036
-        end_effector = self.group.get_end_effector_link()
-        #print(pose)
-        waypoints = [self.group.get_current_pose().pose]
+        print(self.group.get_current_pose())
+        new_pose = Pose()
+        new_pose.position.x = -0.0015629852230885017
+        new_pose.position.y = 0.20148619068817522
+        new_pose.position.z = 0.3524727872933086
+        new_pose.orientation.x = -0.0011823138598739946
+        new_pose.orientation.y = 0.0005675124306162963
+        new_pose.orientation.z = 0.05229732665315609
+        new_pose.orientation.w = 0.998630697349381
 
+        self.group.set_goal_joint_tolerance(0.5)
+        self.group.set_goal_orientation_tolerance(0.05)
+        self.group.set_goal_position_tolerance(0.5)
 
-        
-        pose = self.group.get_current_pose(end_effector).pose
-        print("pose before")
-        print(pose)
-        pose.position.z += 0.2
-        pose.position.x += 0.2
+        self.group.set_start_state_to_current_state()
 
-        waypoints.append(copy.deepcopy(pose))
-        pose.position.z += 0.2
-        pose.position.x += 0.2
-        waypoints.append(copy.deepcopy(pose))
-        self.group.compute_cartesian_path(waypoints, .01,.0)
-        print("pose after")
-        print(pose)
-        # self.group.set_pose_target(pose, end_effector)
-        # print(self.group.get_current_pose(end_effector))
+        self.group.set_pose_target(new_pose)
 
-        self.group.set_goal_tolerance(1)
-        print("error after set goal")
         self.group.go(wait=True)
-        print("error after set go")
         self.group.stop()
 
-        # plan = self.group.plan()
+    def trajectory(self):
+        print('Moving joint')
+        new_pose = Pose()
+        new_pose.position.x = -0.0015629852230885017
+        new_pose.position.y = 0.20148619068817522
+        new_pose.position.z = 0.3524727872933086
+        new_pose.orientation.x = -0.0011823138598739946
+        new_pose.orientation.y = 0.0005675124306162963
+        new_pose.orientation.z = 0.05229732665315609
+        new_pose.orientation.w = 0.998630697349381
 
-        # display_trajectory = DisplayTrajectory()
-        # display_trajectory.trajectorystart = self.robot.get_current_state()
-        # display_trajectory.trajectory.append(plan)
-        # self.display_trajectory_publisher.publish(display_trajectory)
+        self.group.set_goal_joint_tolerance(0.5)
+        self.group.set_goal_orientation_tolerance(0.05)
+        self.group.set_goal_position_tolerance(0.5)
+
+
+        self.group.set_start_state_to_current_state()
+
+        end_effector = self.group.get_end_effector_link()
+
+        original_pose = self.group.get_current_pose(end_effector).pose
+        waypoints = [original_pose, new_pose, original_pose]
+
+        self.group.compute_cartesian_path(waypoints, 0.01,0.0)
+
+        self.group.go(wait=True)
+        self.group.stop()
+
+    def print_current_pose(self):
+        print(self.group.get_current_pose())
+
+    def left_arm_success(self):
+        print('Moving joint')
+        new_pose = Pose()
+        new_pose.orientation.x = 0.29561313709800985
+        new_pose.orientation.y = -0.00118967076273227
+        new_pose.orientation.z = 0.7051219976533809
+        new_pose.orientation.x = -0.4928211273047975
+        new_pose.orientation.y = -0.2919778309320321
+        new_pose.orientation.z = 0.30009606689292934
+        new_pose.orientation.x= 0.7627703673856562
+
+        self.group.set_goal_joint_tolerance(0.5)
+        self.group.set_goal_orientation_tolerance(0.05)
+        self.group.set_goal_position_tolerance(0.5)
+
+        self.group.set_start_state_to_current_state()
+
+        self.group.set_pose_target(new_pose)
+
+        self.group.go(wait=True)
+        self.group.stop()
+
 
 def main():
-    arm = Arm()
-    arm.move_arm()
+
+    left_arm = Arm("left_arm")
+    left_arm.left_arm_success()
+
+    right_arm = Arm("right_arm")
+    right_arm.right_arm_success()
 
 if __name__ == '__main__':
     
