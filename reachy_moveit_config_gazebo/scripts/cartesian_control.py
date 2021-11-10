@@ -56,7 +56,6 @@ class Arm:
         self.group.set_goal_orientation_tolerance(0.05)
         self.group.set_goal_position_tolerance(0.5)
 
-
         self.group.set_start_state_to_current_state()
 
         end_effector = self.group.get_end_effector_link()
@@ -75,13 +74,13 @@ class Arm:
     def left_arm_success(self):
         print('Moving joint')
         new_pose = Pose()
-        new_pose.orientation.x = 0.29561313709800985
-        new_pose.orientation.y = -0.00118967076273227
-        new_pose.orientation.z = 0.7051219976533809
-        new_pose.orientation.x = -0.4928211273047975
-        new_pose.orientation.y = -0.2919778309320321
-        new_pose.orientation.z = 0.30009606689292934
-        new_pose.orientation.x= 0.7627703673856562
+        new_pose.position.x = 0.18370084834382133
+        new_pose.position.y = 0.3015831563239753
+        new_pose.position.z = 0.4617912079821312
+        new_pose.orientation.x = -0.11545982097902376
+        new_pose.orientation.y = -0.12376972328182616
+        new_pose.orientation.z = 0.06826479520322275
+        new_pose.orientation.x=  0.9832039478531878
 
         self.group.set_goal_joint_tolerance(0.5)
         self.group.set_goal_orientation_tolerance(0.05)
@@ -91,17 +90,17 @@ class Arm:
 
         self.group.set_pose_target(new_pose)
 
+
         self.group.go(wait=True)
         self.group.stop()
 
 
 def main():
 
-    left_arm = Arm("left_arm")
-    left_arm.left_arm_success()
-
+    # left_arm = Arm("left_arm")
+    # left_arm.left_arm_success()
     right_arm = Arm("right_arm")
-    right_arm.right_arm_success()
+    right_arm.trajectory()
 
 if __name__ == '__main__':
     
